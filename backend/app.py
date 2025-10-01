@@ -1,6 +1,8 @@
 from fastapi import FastAPI 
 #we can create an API with endpoints.
 from pydantic import BaseModel
+import csv 
+import os 
 #define the structure of the data you expect from the user (e.g., JSON input).
 from fastapi.middleware.cors import CORSMiddleware
 from predict import predict_spam
@@ -26,6 +28,10 @@ app.add_middleware(
 class TextIn(BaseModel):
     message : str
 
+class FeedbackIn(BaseModel):
+    message: str
+    label: str
+    
 @app.get("/") 
 def home():
     return {"message": "Spam Classifier API is running"}
@@ -37,6 +43,18 @@ def predict(data:TextIn):
         "label": result_dict["prediction"],
         "probability": result_dict["probabilities"]
     }
+    
+@app.post("/feedback")
+def save_feedback(feedback:FeedbackIn):
+    file_exists=os.path.isfile("feedback.csv")
+    
+    with open("feedback.csv",mode="a",newline='') as f:
+        writer=csv.writer(f)
+        if not file_exists:
+            writer.writerow(["message","label"])
+        writer.writerow([feedback.message,feedback.label])
+    
+    return {"message":"Feedback saved successfully!"}
 
 
     

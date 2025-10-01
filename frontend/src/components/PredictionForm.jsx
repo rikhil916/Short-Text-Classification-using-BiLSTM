@@ -25,6 +25,18 @@ function PredictionForm(){
         setLoading(false);
     }; 
 
+    const handleFeedback=async (label)=>{
+        try{
+            await axios.post("http://127.0.0.1:8000/feedback",{
+                message:text,
+                label:label,
+        });
+        alert("Thanks for the feedback");
+        }
+        catch(error){
+            console.error("Error saving feedback:",error);
+        }
+    }
     const charData=result ? {
         labels:["Spam","Ham"],
         datasets:[
@@ -61,6 +73,12 @@ function PredictionForm(){
                 <div style={{width:"300px",margin:"auto", marginTop: "20px"}}>
                     <Pie data={charData}/>
                 </div>
+                {/* Feedback buttons */}
+        <div style={{ marginTop: "15px" }}>
+            <p>Was this prediction correct?</p>
+            <button onClick={() => handleFeedback("Spam")}>Mark as Spam</button>
+            <button onClick={() => handleFeedback("Ham")}>Mark as Ham</button>
+        </div>
                 </div>
             )}
         </div>
