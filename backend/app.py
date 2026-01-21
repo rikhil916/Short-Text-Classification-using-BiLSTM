@@ -6,7 +6,7 @@ import os
 #define the structure of the data you expect from the user (e.g., JSON input).
 from fastapi.middleware.cors import CORSMiddleware
 from predict import predict_spam
-    
+from translate import translate
 app=FastAPI()     
 
 
@@ -26,6 +26,7 @@ app.add_middleware(
 
 # Define input schema
 class TextIn(BaseModel):
+    
     message : str
 
 class FeedbackIn(BaseModel):
@@ -38,7 +39,9 @@ def home():
 
 @app.post("/predict")
 def predict(data:TextIn):
-    result_dict = predict_spam(data.message)
+    text=translate(data.message)
+    print(text)
+    result_dict = predict_spam(text)
     return {
         "label": result_dict["prediction"],
         "probability": result_dict["probabilities"]
@@ -52,7 +55,7 @@ def save_feedback(feedback:FeedbackIn):
         writer=csv.writer(f)
         if not file_exists:
             writer.writerow(["message","label"])
-        writer.writerow([feedback.message,feedback.label])
+        writer.writerow([translate(feedback.message),feedback.label])
     
     return {"message":"Feedback saved successfully!"}
 
