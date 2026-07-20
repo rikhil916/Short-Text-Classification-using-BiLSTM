@@ -1,10 +1,10 @@
 import React from "react";
 import PredictionForm from "./components/PredictionForm";
+import "./App.css";
 
 function App() {
   return (
-    <div className="app">
-      {/*<h1>Spam Classifier</h1>*/}
+    <div className="app-shell">
       <PredictionForm />
     </div>
   );
